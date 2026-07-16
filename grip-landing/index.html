@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GRIP — Find Your Line</title>
+  <meta name="description" content="GRIP is the ultimate motorsport super app. Consolidate, connect, and centralise your passion for motorsport across 2 and 4 wheels." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================
+       GRIP BRAND DESIGN SYSTEM
+       ============================
+       Performance Red : #E30613
+       Carbon Black    : #111111
+       Titanium Grey   : #6F6F6F
+       Pure White      : #FFFFFF
+       Heading Font    : Eurostile Extended (fallback: Impact, Arial Black)
+       Body Font       : Inter
+    */
+
+    /* --- Reset --- */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background-color: #111111;
+      color: #ffffff;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; }
+    ul { list-style: none; }
+
+    /* --- Brand Fonts (Eurostile Extended not available on Google Fonts — using a condensed bold stack) --- */
+    .font-brand {
+      font-family: 'Arial Black', 'Impact', 'Haettenschweiler', sans-serif;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* --- Tokens --- */
+    :root {
+      --red: #E30613;
+      --red-dark: #b80410;
+      --black: #111111;
+      --grey: #6F6F6F;
+      --grey-light: rgba(255,255,255,0.06);
+      --white: #ffffff;
+      --card-bg: #191919;
+      --border: rgba(255,255,255,0.07);
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* --- Utility --- */
+    .red { color: var(--red); }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+    .section-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      border: 1px solid var(--red);
+      padding: 0.3rem 0.8rem;
+      border-radius: 2px;
+      margin-bottom: 1.2rem;
+    }
+
+    /* ============================
+       SPEED LINE DECORATION
+    ============================ */
+    .speed-lines {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .speed-lines::before,
+    .speed-lines::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -10%;
+      width: 120%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(227,6,19,0.15), transparent);
+      transform: skewX(-25deg);
+    }
+    .speed-lines::before { top: 35%; }
+    .speed-lines::after  { top: 65%; }
+
+    /* ============================
+       NAVBAR
+    ============================ */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 1.4rem 0;
+      transition: background 0.4s var(--ease), padding 0.4s var(--ease), border-color 0.4s;
+      border-bottom: 1px solid transparent;
+    }
+    #navbar.scrolled {
+      background: rgba(17,17,17,0.9);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 0.9rem 0;
+      border-bottom-color: var(--border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    /* Navbar */
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+    .nav-logo svg { display: block; }
+
+    /* Grip SVG Logo shared styles */
+    .grip-g-icon { overflow: visible; }
+
+    /* Footer logo smaller variant */
+    .footer-brand .nav-logo svg { height: 42px; width: auto; }
+
+    /* Corner accent — icon-only dark card */
+    .corner-accent {
+      position: absolute;
+      bottom: -1rem;
+      right: -1rem;
+      width: 72px; height: 72px;
+      background: var(--red);
+      z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 6px;
+      box-shadow: 0 8px 24px rgba(227,6,19,0.45);
+    }
+    .corner-accent svg { width: 46px; height: 46px; }
+
+    /* Nav links */
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+    }
+    .nav-links a {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--grey);
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 2px;
+      background: var(--red);
+      transition: width 0.25s var(--ease);
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* Nav CTA */
+    .btn-cta {
+      font-family: 'Inter', Arial, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: var(--red);
+      color: #fff;
+      padding: 0.7rem 1.6rem;
+      border-radius: 3px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      white-space: nowrap;
+    }
+    .btn-cta:hover {
+      background: var(--red-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(227,6,19,0.35);
+    }
+    .btn-outline {
+      font-family: 'Inter', Arial, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: transparent;
+      color: #fff;
+      padding: 0.7rem 1.6rem;
+      border-radius: 3px;
+      border: 1px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    }
+    .btn-outline:hover {
+      border-color: #fff;
+      background: rgba(255,255,255,0.06);
+      transform: translateY(-2px);
+    }
+
+    /* ============================
+       HERO
+    ============================ */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center; /* Center content vertically */
+      justify-content: center;
+      padding-top: 100px;
+      padding-bottom: 6rem;
+    }
+    .hero-media {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    .hero-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      animation: slowZoom 18s ease-in-out infinite alternate;
+      filter: contrast(1.08) brightness(1.02);
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+    }
+    @keyframes slowZoom {
+      from { transform: scale(1.0); }
+      to   { transform: scale(1.08); }
+    }
+    /* Premium blend overlay: Vignette and vertical linear gradient */
+    .hero-media::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, rgba(17,17,17,1) 0%, rgba(17,17,17,0.55) 40%, rgba(17,17,17,0.2) 65%, rgba(17,17,17,0.7) 100%),
+        radial-gradient(circle, transparent 20%, rgba(17,17,17,0.7) 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 780px;
+      margin: 0 auto;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    /* Hero banner logo */
+    .hero-logo {
+      width: min(520px, 80vw);
+      height: auto;
+      display: block;
+      margin-bottom: 2rem;
+      /* Keep the dark wordmark readable over the image */
+      filter: drop-shadow(0 4px 32px rgba(0,0,0,0.85)) drop-shadow(0 2px 8px rgba(0,0,0,0.9));
+    }
+
+    /* Eyebrow */
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+    .hero-eyebrow .line {
+      width: 40px; height: 2px;
+      background: var(--red);
+    }
+    .hero-eyebrow span {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--red);
+    }
+
+    /* Hero Title — Eurostile Extended style */
+    .hero-title {
+      font-family: 'Arial Black', 'Impact', 'Haettenschweiler', sans-serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: clamp(4rem, 10vw, 8.5rem);
+      line-height: 0.9;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      color: #ffffff;
+      text-shadow: 0 4px 24px rgba(0,0,0,0.6);
+    }
+    /* Tagline styling per brand guidelines — wide letter spacing, title case */
+    .hero-tagline {
+      font-family: 'Inter', Arial, sans-serif;
+      font-size: clamp(1.2rem, 3vw, 2.2rem);
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      text-transform: none;
+      color: rgba(255, 255, 255, 0.95);
+      margin-bottom: 3.5rem;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    .hero-desc {
+      font-size: 1rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.8);
+      max-width: 540px;
+      line-height: 1.8;
+      margin: 0 auto 2.5rem;
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95);
+      letter-spacing: 0.02em;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+
+
+    /* ============================
+       SCROLL INDICATOR
+    ============================ */
+    .scroll-cue {
+      position: absolute;
+      right: 2rem;
+      bottom: 7rem;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .scroll-cue span {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--grey);
+      writing-mode: vertical-rl;
+    }
+    .scroll-cue .arrow-line {
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, var(--red), transparent);
+      animation: scrollPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 1; transform: scaleY(1); transform-origin: top; }
+      50% { opacity: 0.3; transform: scaleY(0.5); transform-origin: top; }
+    }
+
+    /* ============================
+       RED STRIPE DIVIDER
+    ============================ */
+    .red-stripe {
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--red) 0%, #ff3a49 50%, var(--red) 100%);
+    }
+
+    /* ============================
+       ABOUT / PLATFORM SECTION
+    ============================ */
+    #platform {
+      padding: 7rem 0;
+      background: #111111;
+      position: relative;
+    }
+    #platform .container { position: relative; z-index: 1; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .platform-label { margin-bottom: 1.5rem; }
+    .platform-heading {
+      font-family: 'Arial Black', 'Impact', 'Haettenschweiler', sans-serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.05;
+      margin-bottom: 1.5rem;
+    }
+    .platform-body {
+      color: rgba(255,255,255,0.6);
+      font-size: 1rem;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Platform container centering */
+    .platform-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .platform-text {
+      text-align: center;
+    }
+    .platform-text h2, .platform-text p {
+      max-width: 780px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Pillar list - Redesigned as a horizontal grid */
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.2rem;
+      margin-top: 3rem;
+      text-align: left;
+    }
+    .pillar-item {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .pillar-item:hover { border-color: var(--red); transform: translateY(-4px); }
+    .pillar-icon {
+      width: 44px; height: 44px; flex-shrink: 0;
+      background: rgba(227,6,19,0.06);
+      border: 1px solid rgba(227,6,19,0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pillar-icon svg { width: 22px; height: 22px; stroke: var(--red); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .pillar-text h4 {
+      font-family: 'Arial Black', 'Impact', 'Haettenschweiler', sans-serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .pillar-text p {
+      font-size: 0.82rem;
+      color: var(--grey);
+      line-height: 1.55;
+    }
+
+    /* Visual side */
+    .platform-visual {
+      position: relative;
+    }
+    .platform-visual img {
+      width: 100%;
+      height: 480px;
+      object-fit: cover;
+      border-radius: 6px;
+      filter: brightness(0.85) contrast(1.1);
+    }
+    .platform-visual::before {
+      content: '';
+      position: absolute;
+      inset: -12px;
+      border: 2px solid var(--red);
+      border-radius: 8px;
+      z-index: -1;
+      opacity: 0.4;
+    }
+    /* Corner accent */
+    .corner-accent {
+      position: absolute;
+      bottom: -1rem;
+      right: -1rem;
+      width: 80px; height: 80px;
+      background: var(--red);
+      z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Arial Black', sans-serif;
+      font-style: italic;
+      font-size: 2rem;
+      font-weight: 900;
+      color: #fff;
+      border-radius: 4px;
+    }
+
+    /* ============================
+       FEATURES GRID
+    ============================ */
+    #features {
+      padding: 7rem 0;
+      background: #0e0e0e;
+      position: relative;
+    }
+    .features-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 4rem;
+    }
+    .features-header h2 {
+      font-family: 'Arial Black', 'Impact', 'Haettenschweiler', sans-serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: clamp(2rem, 4vw, 3rem);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+    }
+    .features-header p {
+      color: var(--grey);
+      font-size: 0.95rem;
+      line-height: 1.65;
+    }
+
+    /* Features Showcase Layout */
+    .showcase-container {
+      display: flex;
+      gap: 3rem;
+      align-items: center;
+      margin-top: 2rem;
+    }
+    .showcase-list {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .showcase-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 1.3rem 1.6rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.25s, border-color 0.25s, transform 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .showcase-card::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--red);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .showcase-card.active {
+      background: #191919;
+      border-color: var(--red);
+    }
+    .showcase-card.active::after {
+      opacity: 1;
+    }
+    .sc-header {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 0.4rem;
+    }
+    .sc-num {
+      font-family: 'Arial Black', 'Impact', 'Haettenschweiler', sans-serif;
+      font-style: italic;
+      font-weight: 900;
+      color: var(--grey);
+      font-size: 1.1rem;
+      transition: color 0.25s;
+    }
+    .showcase-card:hover .sc-num,
+    .showcase-card.active .sc-num {
+      color: var(--red);
+    }
+    .sc-header h3 {
+      font-family: 'Arial Black', 'Impact', 'Haettenschweiler', sans-serif;
+      font-style: italic;
+      text-transform: uppercase;
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+    }
+    .sc-desc {
+      color: var(--grey);
+      font-size: 0.82rem;
+      line-height: 1.5;
+      transition: color 0.25s;
+    }
+    .showcase-card.active .sc-desc {
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* Showcase Preview (Phone Frame) */
+    .showcase-preview {
+      flex: 0.8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 300px;
+    }
+    .phone-frame {
+      width: 290px;
+      height: 580px;
+      background: #000;
+      border: 11px solid #262626;
+      border-radius: 38px;
+      box-shadow: 0 25px 60px -15px rgba(0,0,0,0.85);
+      position: relative;
+      overflow: hidden;
+    }
+    .phone-notch {
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 120px; height: 16px;
+      background: #262626;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+      z-index: 10;
+    }
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: #111111;
+      position: relative;
+      overflow: hidden;
+      padding-top: 16px; /* Space for notch */
+    }
+
+    /* Mock Screen General */
+    .mock-screen {
+      position: absolute;
+      inset: 16px 0 0 0;
+      background: #141414;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      transform: translateY(12px);
+      font-family: 'Inter', sans-serif;
+    }
+    .mock-screen.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+      z-index: 2;
+    }
+    
+    /* Mock UI Elements */
+    .mock-header {
+      padding: 0.7rem 0.9rem;
+      background: #191919;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .mock-header h4 {
+      font-family: 'Arial Black', sans-serif;
+      font-style: italic;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #fff;
+    }
+    .mock-logo {
+      height: 12px;
+      width: auto;
+      display: block;
+    }
+    .mock-search {
+      flex: 1;
+      margin: 0 0.6rem;
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      padding-left: 0.5rem;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.65rem;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .mock-header-icon {
+      font-size: 0.8rem;
+      color: #fff;
+      cursor: pointer;
+    }
+    
+    .mock-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .mock-content::-webkit-scrollbar { display: none; }
+
+    /* Mock Tabs & Category scrolls */
+    .mock-tabs {
+      display: flex;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.4rem;
+      margin-bottom: 0.2rem;
+      flex-shrink: 0;
+    }
+    .mock-tab {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--grey);
+      text-transform: uppercase;
+      position: relative;
+    }
+    .mock-tab.active {
+      color: #fff;
+    }
+    .mock-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -0.5rem; left: 0; right: 0;
+      height: 2px;
+      background: var(--red);
+    }
+
+    .mock-scroll-row {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.2rem;
+      flex-shrink: 0;
+    }
+    .mock-scroll-row::-webkit-scrollbar { display: none; }
+    .mock-chip {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.65rem;
+      white-space: nowrap;
+      color: rgba(255,255,255,0.8);
+    }
+    .mock-chip.active {
+      border-color: var(--red);
+      background: rgba(227,6,19,0.06);
+    }
+
+    /* Homepage Feed Card */
+    .mock-feed-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .mock-feed-header {
+      padding: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .mock-avatar {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--red) 0%, #333 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 700;
+    }
+    .mock-feed-user {
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .mock-feed-img {
+      height: 110px;
+      background: linear-gradient(135deg, #1f0b0d 0%, #0d0d0d 100%);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mock-feed-img-label {
+      font-family: 'Arial Black', sans-serif;
+      font-style: italic;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.25);
+    }
+    .mock-telemetry-pill {
+      position: absolute;
+      bottom: 0.5rem; right: 0.5rem;
+      background: rgba(17,17,17,0.85);
+      border: 1px solid var(--red);
+      border-radius: 10px;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.6rem;
+      font-family: 'Arial Black', sans-serif;
+      font-style: italic;
+      color: var(--red);
+    }
+    .mock-feed-footer {
+      padding: 0.5rem 0.6rem;
+      display: flex;
+      gap: 0.8rem;
+      font-size: 0.65rem;
+      color: var(--grey);
+    }
+
+    /* Event Details Card */
+    .mock-event-banner {
+      height: 100px;
+      background: linear-gradient(135deg, #111 0%, #290408 100%);
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0.6rem;
+    }
+    .mock-event-title {
+      font-family: 'Arial Black', sans-serif;
+      font-style: italic;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+    }
+    .mock-event-host {
+      font-size: 0.6rem;
+      color: var(--grey);
+    }
+    .mock-detail-row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      padding: 0.5rem 0;
+      font-size: 0.7rem;
+    }
+    .mock-detail-label { color: var(--grey); }
+    .mock-detail-value { font-weight: 600; }
+    
+    .mock-btn-red {
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 0.6rem;
+      border-radius: 4px;
+      font-family: 'Arial Black', sans-serif;
+      font-style: italic;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      text-align: center;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+    .mock-btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    /* Clubs List Item */
+    .mock-club-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.7rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mock-club-info h5 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+    .mock-club-info p {
+      font-size: 0.62rem;
+      color: var(--grey);
+    }
+    .mock-club-action {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* Products grid */
+    .mock-prod-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+    .mock-prod-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .mock-prod-img {
+      height: 65px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .mock-prod-title {
+      font-size: 0.65rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .mock-prod-price {
+      font-size: 0.65rem;
+      font-family: 'Arial Black', sans-serif;
+      font-style: italic;
+      color: var(--red);
+    }
+
+    /* Features Grid Restored */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 3rem;
+    }
+    .feature-card {
+      background: var(--card-bg);
+      padding: 2.5rem 2rem;
+      position: relative;
+      transition: background 0.3s;
+      cursor: default;
+    }
+    .feature-card:hover { background: #191919; }
+    .feature-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 0; height: 3px;
+      background: var(--red);
+      transition: width 0.4s var(--ease);
+    }
+    .feature-card:hover::after { width: 100%; }
+    
+    .fc-num {
+      font-family: 'Arial Black', 'Impact', 'Haettenschweiler', sans-serif;
+      font-style: italic;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--grey);
+      line-height: 1;
+      margin-bottom: 1rem;
+      transition: color 0.3s;
+    }
+    .feature-card:hover .fc-num { color: var(--red); }
+    
+    .fc-icon {
+      width: 48px; height: 48px;
+      background: rgba(227,6,19,0.08);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.2rem;
+      transition: background 0.3s;
+    }
+    .feature-card:hover .fc-icon { background: var(--red); }
+    .fc-icon svg { width: 22px; height: 22px; stroke: var(--red); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.3s; }
+    .feature-card:hover .fc-icon svg { stroke: #fff; }
+    
+    .fc-title {
+      font-family: 'Arial Black', 'Impact', 'Haettenschweiler', sans-serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 0.7rem;
+    }
+    .fc-desc {
+      font-size: 0.85rem;
+      color: var(--grey);
+      line-height: 1.65;
+    }
+
+    /* ============================
+       TRACK IMAGE SECTION
+    ============================ */
+    #precision {
+      position: relative;
+      width: 100%;
+      height: auto;
+      overflow: hidden;
+      background: #111111;
+    }
+    #precision img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ============================
+       TONE OF VOICE / VALUES
+    ============================ */
+    #values {
+      padding: 7rem 0;
+      background: #111111;
+    }
+    .values-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .values-header h2 {
+      font-family: 'Arial Black', 'Impact', 'Haettenschweiler', sans-serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: clamp(2rem, 4vw, 3rem);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.8rem;
+    }
+    .values-header p { color: var(--grey); font-size: 0.9rem; letter-spacing: 0.05em; }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .value-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem;
+      background: var(--card-bg);
+      transition: border-color 0.25s, transform 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .value-card:hover {
+      border-color: var(--red);
+      transform: translateY(-6px);
+    }
+    .value-card .bg-letter {
+      position: absolute;
+      right: -0.5rem; bottom: -1rem;
+      font-family: 'Arial Black', sans-serif;
+      font-style: italic;
+      font-size: 6rem;
+      font-weight: 900;
+      color: rgba(255,255,255,0.02);
+      text-transform: uppercase;
+      pointer-events: none;
+      user-select: none;
+    }
+    .value-card h3 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 0.7rem;
+    }
+    .value-card p {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.6;
+    }
+
+    /* ============================
+       CTA SECTION
+    ============================ */
+    #cta {
+      padding: 10rem 0;
+      text-align: center;
+      position: relative;
+      background: linear-gradient(180deg, rgba(17,17,17,0.85) 0%, rgba(17,17,17,0.7) 100%), url('assets/cta_banner.png') no-repeat center center;
+      background-size: cover;
+      background-attachment: fixed;
+      overflow: hidden;
+    }
+    #cta::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(227,6,19,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-eyebrow { margin-bottom: 1.5rem; }
+    .cta-heading {
+      font-family: 'Arial Black', 'Impact', 'Haettenschweiler', sans-serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.05;
+      margin-bottom: 1.2rem;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    }
+    .cta-sub {
+      color: rgba(255,255,255,0.8);
+      font-size: 1.05rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 2.5rem;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+    .cta-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* ============================
+       FOOTER
+    ============================ */
+    footer {
+      background: #0c0c0c;
+      border-top: 1px solid var(--border);
+      padding: 3.5rem 0 2rem;
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 3rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+    .footer-brand .nav-logo { margin-bottom: 0.8rem; }
+    .footer-tagline {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--grey);
+    }
+    .footer-nav h4 {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--grey);
+      margin-bottom: 1rem;
+    }
+    .footer-nav ul { display: flex; flex-direction: column; gap: 0.6rem; }
+    .footer-nav a {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.4);
+      transition: color 0.2s;
+    }
+    .footer-nav a:hover { color: #fff; }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .footer-copy {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.25);
+    }
+    .footer-legal {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .footer-legal a {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.25);
+      transition: color 0.2s;
+    }
+    .footer-legal a:hover { color: rgba(255,255,255,0.6); }
+
+    /* ============================
+       ANIMATIONS
+    ============================ */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .fade-in-delay-1 { transition-delay: 0.1s; }
+    .fade-in-delay-2 { transition-delay: 0.2s; }
+    .fade-in-delay-3 { transition-delay: 0.3s; }
+    .fade-in-delay-4 { transition-delay: 0.4s; }
+    .fade-in-delay-5 { transition-delay: 0.5s; }
+
+    /* ============================
+       RESPONSIVE
+    ============================ */
+    @media (max-width: 900px) {
+      .two-col { grid-template-columns: 1fr; gap: 3rem; }
+      .pillars { grid-template-columns: repeat(2, 1fr); }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .values-grid { grid-template-columns: 1fr 1fr; }
+      .stat-item { padding: 1rem; }
+      .stat-number { font-size: 1.2rem; }
+    }
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .pillars { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .values-grid { grid-template-columns: 1fr; }
+      .stats-inner { flex-wrap: wrap; }
+      .stat-item { flex: 1 1 50%; border-right: none; border-bottom: 1px solid var(--border); }
+      .hero-actions { flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ======= NAVBAR ======= -->
+  <header id="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="nav-logo" id="logo-link" aria-label="GRIP Home">
+        <img src="assets/logo_primary_white.png" alt="GRIP Logo" style="height: 38px; width: auto; display: block;">
+      </a>
+      <nav aria-label="Primary Navigation">
+        <ul class="nav-links">
+          <li><a href="#platform">Platform</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#values">Why GRIP</a></li>
+        </ul>
+      </nav>
+      <a href="#cta" class="btn-cta" id="nav-join-btn">Join Beta</a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ======= HERO ======= -->
+    <section id="hero" aria-label="Hero">
+      <div class="hero-media">
+        <img src="assets/hero.jpg" alt="Race car on mountain road at dusk" />
+      </div>
+
+      <div class="scroll-cue" aria-hidden="true">
+        <span>Scroll</span>
+        <div class="arrow-line"></div>
+      </div>
+
+      <div class="container hero-content">
+        <!-- Official GRIP logo as the hero banner focal point -->
+        <img src="assets/logo_primary_white.png" alt="GRIP — Find Your Line" class="hero-logo" style="max-width: 320px; height: auto; margin-bottom: 2rem;">
+        <p class="hero-desc">
+          Your ultimate motorsports companion app.<br>
+          Community, commerce, and connections — all in one place.
+        </p>
+        <div class="hero-actions">
+          <a href="#cta" class="btn-cta" id="hero-cta-btn">Get Early Access</a>
+        </div>
+      </div>
+
+
+    </section>
+
+    <!-- ======= RED STRIPE ======= -->
+    <div class="red-stripe" aria-hidden="true"></div>
+
+    <!-- ======= PLATFORM ======= -->
+    <section id="platform" aria-labelledby="platform-heading">
+      <div class="container">
+        <div class="platform-container">
+          <div class="platform-text fade-in">
+            <div class="platform-label">
+              <span class="section-tag">What is GRIP?</span>
+            </div>
+            <h2 class="platform-heading" id="platform-heading">
+              Your motorsport<br><span class="red">universe,</span><br>fully personalised.
+            </h2>
+            <p class="platform-body">
+              Designed to benefit all motorsport segments — whether you're connecting racers to trackday organisers on circuit asphalt, or setting off on a backcountry offroad adventure. Select your interests, filter out the noise, and get a feed, marketplace, and community tailored specifically to your garage.
+            </p>
+
+            <div class="pillars">
+              <!-- Pillar 1: 4x4 Offroading -->
+              <div class="pillar-item fade-in">
+                <div class="pillar-icon">
+                  <svg viewBox="0 0 24 24"><path d="M14.12 10.63L11.5 7l-5.5 8h16l-3.88-5.37zm-8.24 4.37L9.5 10l2.5 3.5 1.5-2.12 2.5 3.62z"/></svg>
+                </div>
+                <div class="pillar-text">
+                  <h4>4x4 Offroading</h4>
+                  <p>Coordinate trail runs, find flatbed recovery specialists, and log overland rig mods.</p>
+                </div>
+              </div>
+
+              <!-- Pillar 2: Offroad Bikes -->
+              <div class="pillar-item fade-in fade-in-delay-1">
+                <div class="pillar-icon">
+                  <svg viewBox="0 0 24 24"><path d="M12 22c5.52 0 10-4.42 10-9.8S17.52 2.4 12 2.4 2 6.82 2 12.2s4.48 9.8 10 9.8zm0-15.6c3.1 0 5.6 2.5 5.6 5.6s-2.5 5.6-5.6 5.6-5.6-2.5-5.6-5.6 2.5-5.6 5.6-5.6z"/></svg>
+                </div>
+                <div class="pillar-text">
+                  <h4>Offroad Bikes</h4>
+                  <p>Discover enduro trails, track local motocross tracks, and trade dirt-specific parts.</p>
+                </div>
+              </div>
+
+              <!-- Pillar 3: Street/Track Bikes -->
+              <div class="pillar-item fade-in fade-in-delay-2">
+                <div class="pillar-icon">
+                  <svg viewBox="0 0 24 24"><path d="M12 20c4.42 0 8-3.58 8-8s-3.58-8-8-8-8 3.58-8 8 3.58 8 8 8zm0-14c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6 2.69-6 6-6zm1-3V1h-2v2h2zm-1 5a4 4 0 0 0-4 4h2a2 2 0 0 1 2-2V8z"/></svg>
+                </div>
+                <div class="pillar-text">
+                  <h4>Street/Track Bikes</h4>
+                  <p>Connect with bike-friendly trackday organisers, view timing telemetry, and join riding clubs.</p>
+                </div>
+              </div>
+
+              <!-- Pillar 4: Sport/Track Cars -->
+              <div class="pillar-item fade-in fade-in-delay-3">
+                <div class="pillar-icon">
+                  <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 17.93a8 8 0 0 1-2 0V13H5.07a8 8 0 0 1 0-2H11V4.07a8 8 0 0 1 2 0V11h5.93a8 8 0 0 1 0 2H13v6.93z"/></svg>
+                </div>
+                <div class="pillar-text">
+                  <h4>Sport/Track Cars</h4>
+                  <p>Coordinate asphalt trackday entries, compare lap times on leaderboards, and list garage builds.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======= RED STRIPE ======= -->
+    <div class="red-stripe" aria-hidden="true"></div>
+
+    <!-- ======= FEATURES ======= -->
+    <section id="features" aria-labelledby="features-heading">
+      <div class="container">
+        <div class="features-header fade-in">
+          <span class="section-tag">The Platform</span>
+          <h2 id="features-heading">Everything you need.<br><span class="red">One app.</span></h2>
+          <p>Built for drivers who chase better. Smooth & fast by design.</p>
+        </div>
+        <div class="features-grid">
+          <!-- 01. Trackday Bookings -->
+          <div class="feature-card fade-in">
+            <div class="fc-num">01</div>
+            <div class="fc-icon">
+              <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <p class="fc-title">Trackday Bookings</p>
+            <p class="fc-desc">Find, book, and coordinate asphalt trackday events. Manage calendar schedules, noise limits, and entry slots in one tap.</p>
+          </div>
+
+          <!-- 02. Communities & Clubs -->
+          <div class="feature-card fade-in fade-in-delay-1">
+            <div class="fc-num">02</div>
+            <div class="fc-icon">
+              <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <p class="fc-title">Communities & Clubs</p>
+            <p class="fc-desc">Discover motorsport teams, join local enthusiast chapters, coordinate group rides, and chat with members.</p>
+          </div>
+
+          <!-- 03. Marketplace -->
+          <div class="feature-card fade-in fade-in-delay-2">
+            <div class="fc-num">03</div>
+            <div class="fc-icon">
+              <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            </div>
+            <p class="fc-title">Marketplace</p>
+            <p class="fc-desc">Browse local and international listings. Buy and sell race cars, specialized track tires, exhaust parts, and safety gear.</p>
+          </div>
+
+          <!-- 04. Services -->
+          <div class="feature-card fade-in fade-in-delay-1">
+            <div class="fc-num">04</div>
+            <div class="fc-icon">
+              <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <p class="fc-title">Services</p>
+            <p class="fc-desc">Locate flatbed towing, trackside recovery, dyno tuning labs, suspension specialists, and alignment support.</p>
+          </div>
+
+          <!-- 05. Garage Manager -->
+          <div class="feature-card fade-in fade-in-delay-2">
+            <div class="fc-num">05</div>
+            <div class="fc-icon">
+              <svg viewBox="0 0 24 24"><path d="M19 17h2c.55 0 1-.45 1-1v-3c0-.55-.45-1-1-1h-2.24l-1.92-3.84C16.48 7.42 15.72 7 14.88 7H9.12c-.84 0-1.6.42-1.96 1.16L5.24 12H3c-.55 0-1 .45-1 1v3c0 .55.45 1 1 1h2c0 1.66 1.34 3 3 3s3-1.34 3-3h4c0 1.66 1.34 3 3 3s3-1.34 3-3zm-11 1.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm10 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            </div>
+            <p class="fc-title">Garage Manager</p>
+            <p class="fc-desc">Log your builds, manage specifications, track engine maps, register setup configurations, and save service history logs.</p>
+          </div>
+
+          <!-- 06. Convoy Planning & More -->
+          <div class="feature-card fade-in fade-in-delay-3">
+            <div class="fc-num">06</div>
+            <div class="fc-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            </div>
+            <p class="fc-title">Convoy Planning & More</p>
+            <p class="fc-desc">Plan trail routes, coordinate communications, and track real-time locations of your crew during offroad or street convoys.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======= VALUES ======= -->
+    <section id="values" aria-labelledby="values-heading">
+      <div class="container">
+        <div class="values-header fade-in">
+          <span class="section-tag">Brand Values</span>
+          <h2 id="values-heading">Why <span class="red">GRIP?</span></h2>
+          <p>Confident. Precise. Inspiring. We speak to drivers who chase better.</p>
+        </div>
+
+        <div class="values-grid">
+          <div class="value-card fade-in">
+            <div class="bg-letter">P</div>
+            <h3>Precision</h3>
+            <p>Every feature is engineered with purpose. No noise — only what drives you forward.</p>
+          </div>
+          <div class="value-card fade-in fade-in-delay-1">
+            <div class="bg-letter">C</div>
+            <h3>Control</h3>
+            <p>You decide your experience. Personalise your feed, your garage, your community.</p>
+          </div>
+          <div class="value-card fade-in fade-in-delay-2">
+            <div class="bg-letter">R</div>
+            <h3>Reliability</h3>
+            <p>Built for track conditions. Data accuracy and uptime when performance demands it.</p>
+          </div>
+          <div class="value-card fade-in fade-in-delay-3">
+            <div class="bg-letter">I</div>
+            <h3>Innovation</h3>
+            <p>Always evolving. Real-time data, smart alerts, and community-first features.</p>
+          </div>
+          <div class="value-card fade-in fade-in-delay-4">
+            <div class="bg-letter">C</div>
+            <h3>Confidence</h3>
+            <p>We speak clearly and directly. No jargon — just what you need to know.</p>
+          </div>
+          <div class="value-card fade-in fade-in-delay-5">
+            <div class="bg-letter">P</div>
+            <h3>Passion for Driving</h3>
+            <p>Built by drivers, for drivers. This is the platform we always wanted.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======= CTA ======= -->
+    <section id="cta" aria-label="Call to Action">
+      <div class="container">
+        <div class="cta-eyebrow">
+          <span class="section-tag">Early Access</span>
+        </div>
+        <h2 class="cta-heading fade-in">
+          Ready to find<br><span class="red">your line?</span>
+        </h2>
+        <p class="cta-sub fade-in fade-in-delay-1">Join thousands of drivers already on the platform.</p>
+        <div class="cta-actions fade-in fade-in-delay-2">
+          <a href="mailto:support@grip-app.co?subject=Beta%20Access%20Request" class="btn-cta" id="cta-email-btn">Request Beta Access</a>
+          <a href="#platform" class="btn-outline" id="cta-learn-btn">Learn More</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======= FOOTER ======= -->
+  <footer aria-label="Site Footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="#" class="nav-logo" aria-label="GRIP Home">
+            <img src="assets/logo_primary_white.png" alt="GRIP Logo" style="height: 34px; width: auto; display: block;">
+          </a>
+        </div>
+
+        <nav class="footer-nav" aria-label="Platform Links">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="about.html">About</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-nav" aria-label="Company Links">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="careers.html">Careers</a></li>
+            <li><a href="mailto:support@grip-app.co?subject=Contact%20Inquiry">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copy">&copy; 2026 GRIP Motorsport Super App. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Service</a>
+          <a href="cookies.html">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ---- Navbar scroll effect ----
+    const navbar = document.getElementById('navbar');
+    const onScroll = () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // ---- Intersection Observer for fade-in animations ----
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    fadeEls.forEach(el => observer.observe(el));
+
+    // ---- Hero content immediate show ----
+    document.querySelectorAll('.hero-content .fade-in, .hero-content').forEach(el => {
+      el.classList.add('visible');
+    });
+
+
+
+
+  </script>
+</body>
+</html>

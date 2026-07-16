@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cookie Policy | GRIP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --red: #E30613;
+      --black: #111111;
+      --grey: #6F6F6F;
+      --bg: #111111;
+      --border: rgba(255, 255, 255, 0.08);
+      --font-stack: 'Outfit', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: #ffffff;
+      font-family: var(--font-stack);
+      line-height: 1.6;
+      padding-top: 80px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(17,17,17,0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      height: 80px;
+      display: flex;
+      align-items: center;
+      z-index: 100;
+    }
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    .logo img { height: 32px; display: block; }
+    .back-link {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: color 0.25s;
+    }
+    .back-link:hover { color: var(--red); }
+    
+    main { padding: 4rem 0; }
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+    .last-updated {
+      color: var(--grey);
+      font-size: 0.85rem;
+      margin-bottom: 3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    
+    .policy-content h2 {
+      font-size: 1.3rem;
+      margin: 2.5rem 0 1rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--red);
+    }
+    .policy-content p {
+      color: rgba(255,255,255,0.70);
+      margin-bottom: 1.5rem;
+    }
+    .policy-content ul {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+      color: rgba(255,255,255,0.70);
+    }
+    .policy-content li {
+      margin-bottom: 0.5rem;
+    }
+    
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 0;
+      margin-top: 5rem;
+      text-align: center;
+      color: var(--grey);
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">
+        <img src="assets/logo_primary_white.png" alt="GRIP Logo" />
+      </a>
+      <a href="index.html" class="back-link">← Back to Home</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <h1>Cookie Policy</h1>
+      <div class="last-updated">Last Updated: July 16, 2026</div>
+      
+      <div class="policy-content">
+        <p>
+          This is the Cookie Policy for GRIP. Like most professional platforms, we use cookies to improve your browsing experience. This document describes what information they gather, how we use it, and why we sometimes need to store these cookies.
+        </p>
+
+        <h2>1. How We Use Cookies</h2>
+        <p>
+          We use cookies for a variety of reasons detailed below. Unfortunately, in most cases, there are no industry standard options for disabling cookies without completely disabling the functionality and features they add to this site. It is recommended that you leave on all cookies if you are not sure whether you need them or not.
+        </p>
+
+        <h2>2. The Cookies We Set</h2>
+        <ul>
+          <li><strong>Account & Session Cookies:</strong> We use cookies when you are logged in so that we can remember this fact. This prevents you from having to log in every single time you visit a new page. These cookies are typically removed or cleared when you log out.</li>
+          <li><strong>Preference Cookies:</strong> In order to provide you with a premium experience on this site, we provide the functionality to set your preferences for how this site runs when you use it. We need to set cookies so that this information can be recalled whenever you interact with a page.</li>
+        </ul>
+
+        <h2>3. Third Party Cookies</h2>
+        <p>
+          In some special cases, we also use cookies provided by trusted third parties:
+        </p>
+        <ul>
+          <li>This site uses Google Analytics for tracking and measuring usage. This helps us understand how long you spend on the site and the features you find interesting, allowing us to produce more engaging content.</li>
+          <li>We use secure payment processing cookies (e.g. Stripe) to safely handle trackday booking transactions.</li>
+        </ul>
+
+        <h2>4. Contact Us</h2>
+        <p>
+          Hopefully, that has clarified things for you. If you are looking for more information, you can contact us at <a href="mailto:support@grip-app.co" style="color: var(--red); text-decoration: none; font-weight: bold;">support@grip-app.co</a>.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 GRIP Motorsport Super App. All rights reserved.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
