@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <!-- Mask to create the horizontal cutouts on the left side of the G -->
+    <mask id="logo-mask">
+      <rect width="32" height="32" fill="#ffffff" />
+      <!-- Three horizontal cuts to match the motorsport grip logo -->
+      <rect x="0" y="11" width="14" height="1.5" fill="#000000" />
+      <rect x="0" y="15" width="14" height="1.5" fill="#000000" />
+      <rect x="0" y="19" width="14" height="1.5" fill="#000000" />
+    </mask>
+  </defs>
+  <!-- Slanted group for motorsport/racing feel -->
+  <g transform="skewX(-14) translate(3, 0)" mask="url(#logo-mask)">
+    <!-- Red G shape -->
+    <path d="M22,5 L9,5 C5.5,5 3,7.5 3,11.5 L3,20.5 C3,24.5 5.5,27 9,27 L22,27 C24.5,27 26,25.5 26,23 L26,16 L14,16 L14,20 L21,20 L21,22.5 C21,23 20.5,23.5 19.5,23.5 L9.5,23.5 C8.5,23.5 7.5,22.5 7.5,20.5 L7.5,11.5 C7.5,9.5 8.5,8.5 9.5,8.5 L20.5,8.5 C21.5,8.5 22,9 22,10 L22,11.5 L26,11.5 L26,8 C26,5.5 24.5,5 22,5 Z" fill="#E30613" />
+  </g>
+</svg>
